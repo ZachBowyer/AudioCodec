@@ -13,6 +13,7 @@ for i=1:n % form the MDCT matrix
     end
 end
 
+<<<<<<< HEAD
 %s1 = cos((1:10));
 %s2 = cos((1:10)*2);
 %disp(s1);
@@ -30,6 +31,13 @@ x=cos((1:4096)*pi*64*
  f/4096); % test signal
 % plot(x);
 % disp(x);
+=======
+M=sqrt(2/n)*M;
+N=M'; % inverse MDCT
+Fs=8192; % Sampling rate in (htz?)
+f=6;  %???
+x=cos((1:4096)*pi*64*f/4096); % test signal
+>>>>>>> ef33ea7862053630d814c56d14e8632e0b85a9c1
 sound(x,Fs) % Matlab’s sound command
 
 out=[];
@@ -44,5 +52,9 @@ for k=1:nb % loop over windows
     out=[out;(w2+w3)/2]; % collect the reconstructed signal
     end
 end
-pause(1)
+disp(size(x))
+disp(size(out))
+disp(x)
+disp(out)
+pause(1);
 sound(out,Fs) % play the reconstructed tone
