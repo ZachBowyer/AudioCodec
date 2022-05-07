@@ -17,7 +17,7 @@ for i=1:n
     end
 end
 M=sqrt(2/n)*M;
-N=M'; % inverse MDCT
+inverseM=M'; % inverse MDCT
 
 Fs=8192; %Sampling rate in (htz?)
 
@@ -36,25 +36,31 @@ h = h.'; %Transpose h matrix to make multiplication work
 
 out=[];
 for k=1:nb % loop over windows
-    x0=x(1+(k-1)*n:2*n+(k-1)*n)';
     
-    %Transform input vector via H-element wise multiplication
-    x0 = x0.*h;
-    y0=M*x0;
+    %Compression
+    x0=x(1+(k-1)*n:2*n+(k-1)*n)';       %Get input vector window (Cutting input into windows)
+    x0 = x0.*h;                         %Transform input vector via H-element wise multiplication
+    y0=M*x0;                            %MDCT matrix multiplication to get output vector
+    y1=round(y0/q);                     %Quantization
     
-    y1=round(y0/q); % transform components quantized
-    y2=y1*q; % and dequantized
-    w(:,k)=N*y2.*h; % invert the MDCT
-    %w(:,k)=N*y2;
-    disp(size(w))
+    %Decompression
+    y2=y1*q;                            %Dequantization
+    
+    %W is matrix of all windows
+    w(:,k)=inverseM*y2;                 %Set column vectors of W to Inverse M * dequantized output vector
+    w(:,k)= w(:,k).*h;                  %Undo window function - Multiply new column vector by H element wise
+    
+    %Skip first iteration
     if(k>1)
-        w2=w(n+1:2*n,k-1);
-        w3=w(1:n,k);
-        out=[out;(w2+w3)/2]; % collect the reconstructed signal
+        w2=w(1:n,k);                    %Window split bottom half
+        w3=w(n+1:2*n,k-1);              %Window split top half
+
+        %W2 and W3 are 32x1 column vectors
+        out=[out;(w2+w3)/2];            %Reconstructed signal
     end
 end
-%disp(size(out));
 
+%Display plots
 figure(1);
 plot(x);
 hold on 
