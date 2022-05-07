@@ -13,9 +13,10 @@ for i=1:n % form the MDCT matrix
     end
 end
 
-s1 = cos((1:10))
-s2 = cos((1:10)*2)
-disp(s1, s2)
+%s1 = cos((1:10));
+%s2 = cos((1:10)*2);
+%disp(s1);
+%disp(s2);
 %size(s2)
 %sampleRate = 4096;
 %sound(s2, sampleRate);
@@ -24,9 +25,10 @@ disp(s1, s2)
 M=sqrt(2/n)*M;
 N=M'; % inverse MDCT
 Fs=8192; % Sampleing rate in (htz?)
-f=11;  %???
-x=cos((1:8192)*pi*64*f/4096); % test signal
-disp(x)
+f=4;  %frequency
+x=cos((1:4096)*pi*64*f/4096); % test signal
+% plot(x);
+% disp(x);
 sound(x,Fs) % Matlab’s sound command
 
 out=[];
@@ -41,5 +43,23 @@ for k=1:nb % loop over windows
     out=[out;(w2+w3)/2]; % collect the reconstructed signal
     end
 end
+
+figure(1);
+plot(x);
+hold on 
+plot(x, 'o');
+title('Input Data With Even f');
+legend('Input Data Points','Fitted wave')
+xlim([0,1000]);
+
+figure(2);
+plot(out);
+hold on
+plot(out, 'o');
+title('Output With Even f');
+legend('Reconstructed data points','Fitted wave from points')
+xlim([0,100]);
+
+
 pause(1)
-%sound(out,Fs) % play the reconstructed tone
+sound(out,Fs) % play the reconstructed tone
