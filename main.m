@@ -6,7 +6,7 @@ n=32; % length of window
 nb=127; % number of windows; must be > 1
 
 %Quantization information
-b=100; % Bits allowed to represent numbers
+b=4; % Bits allowed to represent numbers
 L=5; % Quantization interval [-L L]
 q=2*L/(2^b-1); %Quantization number
 dataPoints = 4096;
