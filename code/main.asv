@@ -6,11 +6,10 @@ n=32; % length of window
 nb=127; % number of windows; must be > 1
 
 %Quantization information
-b=100; % Bits allowed to represent numbers
-L=5; % Quantization interval [-L L]
-q=2*L/(2^b-1); %Quantization number
-
-dataPointsPerTone = 4096
+%b=4; % Bits allowed to represent numbers
+%L=5; % Quantization interval [-L L]
+%q=2*L/(2^b-1); %Quantization number
+dataPoints = 4096;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %MDCT matrix formation
@@ -33,10 +32,10 @@ h = h.'; %Transpose h matrix to make multiplication work
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Input data
-frequencies = [10:1:20];  %Multiples of 64
+frequencies = [8,9,10,11];  %Multiples of 64
 frequencyMatrix = [];
 for index=1:size(frequencies,2) %four tones
-    x=cos((1:dataPointsPerTone)*pi*64*(frequencies(index))/4096); % test signal
+    x=cos((1:dataPoints)*pi*64*(frequencies(index))/dataPoints); % test signal
     frequencyMatrix = [frequencyMatrix x];
 end
 
@@ -46,14 +45,19 @@ for i=1:size(frequencies,2)
     for k=1:nb % loop over windows
         
         %Compression
-        tone = frequencyMatrix(((4096*i)-4096+1):4096*i);
-        x0=tone(1+(k-1)*n:2*n+(k-1)*n)';       %Get input vector window (Cutting input into windows)
-        x0 = x0.*h;                         %Transform input vector via H-element wise multiplication
-        y0=M*x0;                            %MDCT matrix multiplication to get output vector
-        y1=round(y0/q);                     %Quantization
+        tone = frequencyMatrix(((dataPoints*i)-dataPoints+1):dataPoints*i);
+        x0=tone(1+(k-1)*n:2*n+(k-1)*n)';    %Get input vector window (Cutting input into windows)
+        x0 = x0.*h;                             %Transform input vector via H-element wise multiplication
+        y0=M*x0;                                %MDCT matrix multiplication to get output vector
+        q =[];
+        for j=1:y0
+            b =  ceil(abs(log(abs(y0(j))))) + 1; %Get b bits for the given y value (importance sampling)
+            L = abs(y0(j));                         %Quantization interval [-L L]
+            q = [q; 2*L/(2^b-1)];                      %Quantization number
+        y1=round(y0(:,i)./q);                %Quantization
     
         %Decompression
-        y2=y1*q;                            %Dequantization
+        y2=y1.*q;                            %Dequantization
 
         %W is matrix of all windows
         w(:,k)=inverseM*y2;                 %Set column vectors of W to Inverse M * dequantized output vector
@@ -73,23 +77,23 @@ end
 
 %Display plots
 figure(1);
-plot(frequencyMatrix);
+plot(frequencyMatrix(1:1:end));
 hold on 
-plot(frequencyMatrix, 'o');
-title('Input Data With Even f');
+plot(frequencyMatrix(1:1:end), 'o');
+title('Input Data With f = 11');
 legend('Input Data Points','Fitted wave')
-%xlim([0,1000]);
+xlim([0,300]);
 
 figure(2);
-plot(combinedOutputs);
+plot(combinedOutputs(1:1:end));
 hold on
-plot(combinedOutputs, 'o');
-title('Output With Even f');
+plot(combinedOutputs(1:1:end), 'o');
+title('Output With f = 11');
 legend('Reconstructed data points','Fitted wave from points')
-%xlim([0,100]);
+xlim([0,300]);
 
 Fs=8192; %Sampling rate in (htz?)
 %sound(frequencyMatrix,Fs) % Matlab’s sound command
 %pause(1)
-sound(combinedOutputs, Fs)
+%sound(combinedOutputs, Fs)
 %sound(out,Fs) % play the reconstructed tone
