@@ -1,4 +1,4 @@
-function [q1,y1] = coder(vectorX, n, nb, isOdd)
+function [q1,y1] = coder(vectorX, n, nb)
     %n=32; % length of window
     %nb=127; % number of windows; must be > 1
     y1 = [];

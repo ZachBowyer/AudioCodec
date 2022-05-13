@@ -1,7 +1,7 @@
-function [out] = decoder(y1)
-    n=32; % length of window
-    nb=127; % number of windows; must be > 1
-
+function [out] = decoder(y1, q, n, nb)
+    %n=32; % length of window
+    %nb=127; % number of windows; must be > 1
+    out = [];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %MDCT matrix formation
     for i=1:n 
@@ -21,7 +21,7 @@ function [out] = decoder(y1)
     h = h.'; %Transpose h matrix to make multiplication work
     for k=1:nb
     %Decompression
-        y2=y1.*q;                                   %Dequantization
+        y2=y1(((n*k)-n+1):n*k).*q(((n*k)-n+1):n*k);                                   %Dequantization
 
         %W is matrix of all windows
         w(:,k)=inverseM*y2;                         %Set column vectors of W to Inverse M * dequantized output vector
