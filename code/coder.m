@@ -31,9 +31,9 @@ function [q1,y1] = coder(vectorX, n, nb)
         q =[];
         for j=1:size(y0)
             b = ceil(abs(log(abs(y0(j))))) + 1;    %Get b bits for the given y value (importance sampling)
-            %if(b > 100) 
-            %    b = 100
-            %end
+            if(b == inf) 
+                b = 10;
+            end
             bFD=[bFD; b];
             L = abs(y0(j));                         %Quantization interval [-L L]
             q = [q; 2*L/(2^b-1)];                   %Quantization number
@@ -43,7 +43,6 @@ function [q1,y1] = coder(vectorX, n, nb)
         end
         q1 = [q1; q];
    end
-   disp(bFD);
    disp(sum(bFD));
 end
 

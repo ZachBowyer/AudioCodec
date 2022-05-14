@@ -9,7 +9,7 @@ Fs=8192; %Sampling rate in (htz?)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Input data
 
-frequencies = [8,9,10,11]; %Multiples of 64
+frequencies = [5,6,7,8]; %Multiples of 64
 frequencyMatrix = [];  
 for index=1:size(frequencies,2) %four tones
     x=cos((1:(Fs/2))*pi*64*(frequencies(index))/(Fs/2)); % test signal
@@ -51,8 +51,9 @@ plot(combinedOut(1:1:end), 'o');
 title('Output With f = 11');
 legend('Reconstructed data points','Fitted wave from points')
 xlim([0,300]);
-
-sound(frequencyMatrix,Fs) % Matlab’s sound command
-pause(4)
-sound(combinedOut, Fs)% play the reconstructed tone
+audiowrite('./audio/reconstructed4tones.wav' ,frequencyMatrix, Fs);
+audiowrite('./audio/orignal4tones.wav' ,combinedOut, Fs);
+%sound(frequencyMatrix,Fs) % Matlab’s sound command
+%pause(4)
+%sound(combinedOut, Fs)% play the reconstructed tone
 
