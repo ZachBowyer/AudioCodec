@@ -21,15 +21,15 @@ function [out] = decoder(y1, q, n, nb)
     h = h.'; %Transpose h matrix to make multiplication work
     for k=1:nb
     %Decompression
-        y2=y1(((n*k)-n+1):n*k).*q(((n*k)-n+1):n*k);                                   %Dequantization
+        y2=y1(((n*k)-n+1):n*k).*q(((n*k)-n+1):n*k);               %Dequantization
 
         %W is matrix of all windows
-        w(:,k)=inverseM*y2;                         %Set column vectors of W to Inverse M * dequantized output vector
-        w(:,k)= w(:,k).*h;                          %Undo window function - Multiply new column vector by H element wise
+        w(:,k)=inverseM*y2;                                       %Set column vectors of W to Inverse M * dequantized output vector
+        w(:,k)= w(:,k).*h;                                        %Undo window function - Multiply new column vector by H element wise
 
         %Skip first iteration
         if(k>1)
-            w2=w(1:n,k);                            %Window split bottom half
+            w2=w(1:n,k);                                          %Window split bottom half
             w3=w(n+1:2*n,k-1);                      %Window split top half
 
             %W2 and W3 are 32x1 column vectors

@@ -1,4 +1,4 @@
-function [q1,y1] = coder(vectorX, n, nb, isOdd)
+function [q1,y1] = coder(vectorX, n, nb)
     %n=32; % length of window
     %nb=127; % number of windows; must be > 1
     y1 = [];
@@ -30,7 +30,10 @@ function [q1,y1] = coder(vectorX, n, nb, isOdd)
         y0=M*x0;                                    %MDCT matrix multiplication to get output vector
         q =[];
         for j=1:size(y0)
-            b =  ceil(abs(log(abs(y0(j))))) + 1;    %Get b bits for the given y value (importance sampling)
+            b = ceil(abs(log(abs(y0(j))))) + 1;    %Get b bits for the given y value (importance sampling)
+            %if(b > 100) 
+            %    b = 100
+            %end
             bFD=[bFD; b];
             L = abs(y0(j));                         %Quantization interval [-L L]
             q = [q; 2*L/(2^b-1)];                   %Quantization number
@@ -40,8 +43,7 @@ function [q1,y1] = coder(vectorX, n, nb, isOdd)
         end
         q1 = [q1; q];
    end
+   disp(bFD);
    disp(sum(bFD));
-   
-
 end
 
