@@ -13,20 +13,25 @@ fileName = 'audio(1).wav';
 [newX,FS] = audioread(['./audio/', fileName]);
 combinedOut = [];
 [numwRows, numCols]=size(newX);
-for i=1:numCols
-    xRow = newX(:,i)';
-    [q, y1] = coder(xRow, n, nb);
-    out = decoder(y1, q, n, nb);
-    combinedOut = [combinedOut out];
-end
-%[pxx,frequencies] = pwelch(newX,[],[],[],FS);
-s = whos('newX');
-disp('Old file data');
-disp(s.bytes);
-sound(newX,FS);
+%%%%%
+%Summing the different channels as one vector
+test = newX(:,1)+newX(:,2);
+[q, y1] = coder(test, n, nb);
+out = decoder(y1, q, n, nb);
+%for i=1:numCols
+%    xRow = newX(:,i)';
+%    [q, y1] = coder(xRow, n, nb);
+%    out = decoder(y1, q, n, nb);
+%   combinedOut = [combinedOut out];
+%end
+%[pxx,frequencies] = pwelch(newX,[],[],[],FS)
+%sound(newX,FS);
 %pause(100)
 %sound(combinedOut, FS);
-audiowrite('reconstructed'+fileName+)
-o = whos('combinedOut');
+newFileName = ['reconstructed-' fileName];
+%audiowrite(['reconstructed-' newFileName],combinedOut, FS);
+audiowrite(['reconstructed-' newFileName],out, FS);
+%o = whos('combinedOut');
+o = whos('out');
 disp("New file data");
 disp(o.bytes);

@@ -9,13 +9,16 @@ Fs=8192; %Sampling rate in (htz?)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Input data
 
-frequencies = [5,6,7,8]; %Multiples of 64
+frequencies = [5]; %Multiples of 64
 frequencyMatrix = [];  
 for index=1:size(frequencies,2) %four tones
     x=cos((1:(Fs/2))*pi*64*(frequencies(index))/(Fs/2)); % test signal
     frequencyMatrix = [frequencyMatrix x];
 end
 
+disp('Original data:');
+s = whos('frequencyMatrix');
+disp(s.bytes);
 combinedOut = [];
 for i=1:size(frequencies,2)
     %Calling for coder/decoder
@@ -51,9 +54,13 @@ plot(combinedOut(1:1:end), 'o');
 title('Output With f = 11');
 legend('Reconstructed data points','Fitted wave from points')
 xlim([0,300]);
-audiowrite('./audio/reconstructed4tones.wav' ,frequencyMatrix, Fs);
-audiowrite('./audio/orignal4tones.wav' ,combinedOut, Fs);
+audiowrite('./audio/reconstructedBadEven.wav' ,combinedOut, Fs);
+audiowrite('./audio/orignalBadEven.wav' , frequencyMatrix, Fs);
 %sound(frequencyMatrix,Fs) % Matlab’s sound command
-%pause(4)
+%pause(6);
 %sound(combinedOut, Fs)% play the reconstructed tone
+o = whos('combinedOut');
+%o = whos('out');
+disp("New file data");
+disp(o.bytes);
 
