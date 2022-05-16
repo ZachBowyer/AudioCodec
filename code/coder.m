@@ -1,3 +1,6 @@
+%Input: a vector of numbers (in a wave format (cos()))
+%Output: q vector containing the quantization numbers for the compressed output of
+%the coder, y1 is the compressed output of the coder
 function [q1,y1] = coder(vectorX, n, nb)
     %n=32; % length of window
     %nb=127; % number of windows; must be > 1
@@ -22,6 +25,7 @@ function [q1,y1] = coder(vectorX, n, nb)
     h = h.'; %Transpose h matrix to make multiplication work
 
    bFD = [];
+   %Compress for nb windows
    for k=1:nb % loop over windows
         %Compression
         %tone = vectorX(((dataPoints*i)-dataPoints+1):dataPoints*i);
@@ -41,8 +45,8 @@ function [q1,y1] = coder(vectorX, n, nb)
         for f=1:size(q)
             y1=[y1; round(y0(f)/q(f))];             %Quantization
         end
-        q1 = [q1; q];
+        q1 = [q1; q];                               %Load q vector into total q1 vector
    end
-   disp(sum(bFD));
+   disp(sum(bFD));                                  %Display sum of bits for each given channel
 end
 

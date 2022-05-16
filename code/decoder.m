@@ -1,3 +1,7 @@
+%Input: compressed data vector (y1) from a coder, quantization numbers (q) for
+%the y1 vector
+%Output: reconstructed data vector (out) of the given compressed vector and its
+%quantization numbers
 function [out] = decoder(y1, q, n, nb)
     %n=32; % length of window
     %nb=127; % number of windows; must be > 1
@@ -19,6 +23,7 @@ function [out] = decoder(y1, q, n, nb)
         h = [h val];
     end
     h = h.'; %Transpose h matrix to make multiplication work
+    %Decompress for nb windows
     for k=1:nb
     %Decompression
         y2=y1(((n*k)-n+1):n*k).*q(((n*k)-n+1):n*k);               %Dequantization
